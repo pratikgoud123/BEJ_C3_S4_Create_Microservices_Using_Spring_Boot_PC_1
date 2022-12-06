@@ -1,0 +1,53 @@
+version: '3.9'
+services:
+  product-service:
+    image: productmicroserviceimage1
+    container_name: productmicroservicecontainer1
+    build: BEJ-C2_S3_REST_API_MONGODB_PC_1/
+    restart: always
+    networks:
+      - mynetwork1
+    ports:
+      - 8088:8088
+    depends_on:
+      - mongoService
+
+
+  mongoService:
+    image: mongo:latest
+    container_name: mongocontainer2
+    ports:
+      - 27017:27017
+    networks:
+      - mynetwork1
+
+  authentication-service:
+    image: authenticationmicroserviceimage1
+    container_name: authenticationmicroservicecontainer1
+    build: UserAuthenticationService/
+    restart: always
+    networks:
+      - mynetwork1
+    ports:
+      - 8089:8089
+    depends_on:
+      - mysqlService
+
+
+  mysqlService:
+    image: mysql:latest
+    container_name: mysqlcontainer2
+    networks:
+      - mynetwork1
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USERNAME: root
+      MYSQL_PASSWORD: root
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+
+
+networks:
+  mynetwork1:
+    driver: bridge
